@@ -15,3 +15,31 @@
     Reflect.apply(this, [exports, require, module, filename, path.dirname]); module.exports = 'abc'
     将函数执行后的结果赋值给模块的 this.exports 即为 module.exports
 12. 最终返回的是 module.exports
+
+## exports === module.exports 真
+
+初始化时: exports = module.exports = {}. 所哟我们不能直接修改 exports, 因为 exports 指向的是 module.exports
+
+因为 exports 和 module.exports 指向的是一个对象, 所以可以直接修改对象来同时修改 exports 和 module.exports.
+
+可以在 global 修改属性, 但是不要这么做, 因为会污染全局变量.
+
+## 模块的缓存
+
+如果在引用模块中添加定时器, 定时器修改 module.exports, 由于 node require 的缓存中有这个模块, 直接返回缓存中的 module.exports, 而这个 module.exports 会被定时器修改.
+
+## loaded
+
+commonjs 内部维护一个 loaded 对象, 用来记录当前模块是否加载过.
+
+## 模块的循环引用
+
+1. 模块的循环引用, 不会报错, 不会阻塞.
+2. 模块的循环引用, 不会重复加载.
+
+## 模块的加载顺序
+
+1. 先加载当前模块
+2. 加载当前模块的依赖
+3. 加载完毕后, 执行当前模块
+4. 执行完毕后, 执行下一个模块
